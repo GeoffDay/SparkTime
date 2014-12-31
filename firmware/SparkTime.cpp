@@ -221,7 +221,7 @@ String SparkTime::ISODateString(uint32_t tnow) {
 
   uint32_t offset = timeZoneDSTOffset(tnow)/36L;
   // Guard against timezone problems
-  if (offset>-24 && offset<1440) { 
+  if (offset>-2400 && offset<2400) { 
     if (offset < 0) {
       ISOString = ISOString + "-" + _digits[-offset];
     } else {
