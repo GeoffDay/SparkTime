@@ -33,7 +33,7 @@
 SparkTime::SparkTime()
 {
     _UDPClient = NULL;
-    _timezone = -5.0;
+    _timezone = -5;
     _useDST = true;
     _useEuroDSTRule = false;
     _syncedOnce = false;
@@ -219,13 +219,13 @@ String SparkTime::ISODateString(uint32_t tnow) {
   ISOString += ":";
   ISOString += secondString(tnow);
 
-  int32_t offset = timeZoneDSTOffset(tnow)/3600L;
+  uint32_t offset = timeZoneDSTOffset(tnow)/36L;
   // Guard against timezone problems
-  if (offset>-24 && offset<24) { 
+  if (offset>-24 && offset<1440) { 
     if (offset < 0) {
-      ISOString = ISOString + "-" + _digits[-offset] + "00";
+      ISOString = ISOString + "-" + _digits[-offset];
     } else {
-      ISOString = ISOString + "+" + _digits[offset] + "00";
+      ISOString = ISOString + "+" + _digits[offset];
     }
   }
   return ISOString;
@@ -295,18 +295,18 @@ void SparkTime::setNTPInvterval(uint32_t intervalMinutes) {
   _interval = max(fiveMinutes, interval);
 }
 
-void SparkTime::setTimeZone(float hoursOffset) {
-  _timezone = hoursOffset;
+void SparkTime::setTimeZone(uint32_t minutesOffset) {
+  _timezone = minutesOffset;
 }
 
 bool SparkTime::isUSDST(uint32_t tnow) {
   // 2am 2nd Sunday in March to 2am 1st Sunday in November
   // can't use offset here 
   bool result = false;
-  uint32_t dayNum = (tnow+_timezone*3600UL-SPARKTIMEBASESTART)/SPARKTIMESECPERDAY;
+  uint32_t dayNum = (tnow+_timezone*60UL-SPARKTIMEBASESTART)/SPARKTIMESECPERDAY;
   uint32_t tempYear = SPARKTIMEBASEYEAR;
   uint8_t  tempMonth = 0;
-  uint8_t tempHour = ((tnow+_timezone*3600UL) % 86400UL)/3600UL;
+  uint8_t tempHour = ((tnow+_timezone*60UL) % 86400UL)/3600UL;
 
   while(dayNum >= YEARSIZE(tempYear)) {
     dayNum -= YEARSIZE(tempYear);
@@ -340,10 +340,10 @@ bool SparkTime::isEuroDST(uint32_t tnow) {
   // 1am last Sunday in March to 1am on last Sunday October
   // can't use offset here 
   bool result = false;
-  uint32_t dayNum = (tnow+_timezone*3600UL-SPARKTIMEBASESTART)/SPARKTIMESECPERDAY;
+  uint32_t dayNum = (tnow+_timezone*60UL-SPARKTIMEBASESTART)/SPARKTIMESECPERDAY;
   uint32_t tempYear = SPARKTIMEBASEYEAR;
   uint8_t  tempMonth = 0;
-  uint8_t tempHour = ((tnow+_timezone*3600UL) % 86400UL)/3600UL;
+  uint8_t tempHour = ((tnow+_timezone*60UL) % 86400UL)/3600UL;
 
   while(dayNum >= YEARSIZE(tempYear)) {
     dayNum -= YEARSIZE(tempYear);
@@ -417,7 +417,7 @@ void SparkTime::updateNTPTime() {
 }
 
 int32_t SparkTime::timeZoneDSTOffset(uint32_t tnow) {
-  int32_t result = _timezone*3600UL;
+  int32_t result = _timezone*60UL;
   if ((_useDST && (!_useEuroDSTRule  && isUSDST(tnow))) ||
       (_useDST && (_useEuroDSTRule && isEuroDST(tnow)))) {
     result += 3600UL;
