@@ -33,7 +33,7 @@
 SparkTime::SparkTime()
 {
     _UDPClient = NULL;
-    _timezone = -5;
+    _timezone = -5.0;
     _useDST = true;
     _useEuroDSTRule = false;
     _syncedOnce = false;
@@ -295,7 +295,7 @@ void SparkTime::setNTPInvterval(uint32_t intervalMinutes) {
   _interval = max(fiveMinutes, interval);
 }
 
-void SparkTime::setTimeZone(int32_t hoursOffset) {
+void SparkTime::setTimeZone(float hoursOffset) {
   _timezone = hoursOffset;
 }
 
