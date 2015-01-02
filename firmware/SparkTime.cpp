@@ -177,16 +177,16 @@ ISOString += minuteString(tnow);
 ISOString += ":";
 ISOString += secondString(tnow);
 // create separate hours and minutes offset variables
-uint32_t offsetHrs = timeZoneDSTOffset(tnow)/3600L;
-uint32_t offsetMins = (timeZoneDSTOffset(tnow) - (offsetHrs * 3600)) / 60;
+int32_t offsetHrs = timeZoneDSTOffset(tnow)/3600L;
+int32_t offsetMins = (timeZoneDSTOffset(tnow) - (offsetHrs * 3600)) / 60;
 
 // Guard against timezone problems
 if (offsetHrs>-24 && offsetHrs<24) {
-if (offsetHrs < 0) {
-ISOString = ISOString + "-" + _digits[-offsetHrs] + _digits[-offsetMins];
-} else {
-ISOString = ISOString + "+" + _digits[offsetHrs] + _digits[offsetMins];
-}
+    if (offsetHrs < 0) {
+        ISOString = ISOString + "-" + _digits[-offsetHrs] + _digits[-offsetMins];
+    } else {
+        ISOString = ISOString + "+" + _digits[offsetHrs] + _digits[offsetMins];
+    }
 }
 return ISOString;
 }
@@ -213,13 +213,13 @@ _useDST = savedUseDST;
 return ISOString;
 }
 uint32_t SparkTime::now() {
-if (!_syncedOnce && !_isSyncing) {
-updateNTPTime();
-}
-if (!_syncedOnce) { // fail!
-return SPARKTIMEBASEYEAR; // Jan 1, 2014
-}
-return nowNoUpdate();
+    if (!_syncedOnce && !_isSyncing) {
+        updateNTPTime();
+    }
+    if (!_syncedOnce) { // fail!
+        return SPARKTIMEBASEYEAR; // Jan 1, 2014
+    }
+    return nowNoUpdate();
 }
 uint32_t SparkTime::nowNoUpdate() {
 uint32_t mTime = millis();
@@ -227,7 +227,7 @@ uint32_t mTime = millis();
 //unsigned long nowFrac = _lastSyncNTPFrac + mFracSec*2^22/1000;
 uint32_t nowSec = _lastSyncNTPTime + ((mTime - _lastSyncMillisTime)/1000);
 if (_lastSyncMillisTime>mTime) { // has wrapped
-nowSec = nowSec + SPARKTIMEWRAPSECS;
+    nowSec = nowSec + SPARKTIMEWRAPSECS;
 }
 if (nowSec >= (_lastSyncNTPTime + _interval)) {
 updateNTPTime();
