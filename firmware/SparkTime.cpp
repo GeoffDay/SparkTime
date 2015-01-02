@@ -26,8 +26,9 @@ Translation for other languages
 SparkTime::SparkTime()
 {
 _UDPClient = NULL;
-_timezone = 10.5;	// _timezone is now a float_t
-_tz = uint32_t(_timezone*3600UL);	// make an integer version of _timezone
+_timezoneHrs = 10;	
+_timezoneMns = 30;
+_tz = uint32_t(_timezoneHrs*3600UL + _timezoneMns*60UL);	// make an integer version of _timezone
 _useDST = true;
 _useEuroDSTRule = false;
 _syncedOnce = false;
@@ -190,7 +191,7 @@ ISOString = ISOString + "+" + _digits[offsetHrs] + _digits[offsetMins];
 return ISOString;
 }
 String SparkTime::ISODateUTCString(uint32_t tnow) {
-float savedTimeZone = _timezone;
+uint32_t savedTimeZone = _timezone;
 bool savedUseDST = _useDST;
 _timezone = 0.0;
 _useDST = false;
@@ -244,8 +245,11 @@ const uint32_t fiveMinutes = 5UL * 60UL;
 uint32_t interval = intervalMinutes * 60UL;
 _interval = max(fiveMinutes, interval);
 }
-void SparkTime::setTimeZone(float hoursOffset) {
-_timezone = hoursOffset;
+void SparkTime::setTimeZoneHrs(uint32_t hoursOffset) {
+_timezoneHrs = hoursOffset;
+}
+void SparkTime::setTimeZoneMns(uint32_t minsOffset) {
+_timezoneMns = minsOffset;
 }
 bool SparkTime::isUSDST(uint32_t tnow) {
 // 2am 2nd Sunday in March to 2am 1st Sunday in November
@@ -355,7 +359,7 @@ if (bytesrecv>0) {
   _isSyncing = false;
 }
 int32_t SparkTime::timeZoneDSTOffset(uint32_t tnow) {
-int32_t result = int32_t(_timezone*3600UL);					// _timezone is a float_t so need to cast back
+int32_t result = _timezoneHrs*3600UL + _timezoneMns*60UL;	
   if ((_useDST && (!_useEuroDSTRule && isUSDST(tnow))) ||
       (_useDST && (_useEuroDSTRule && isEuroDST(tnow)))) {
       result += 3600UL;
