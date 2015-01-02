@@ -177,11 +177,11 @@ ISOString += ":";
 ISOString += secondString(tnow);
 // create separate hours and minutes offset variables
 uint32_t offsetHrs = timeZoneDSTOffset(tnow)/3600L;
-uint32_t offsetMins = (timeZoneDSTOffset(tnow) - (offsetHrs * 3600)) / 60
+uint32_t offsetMins = (timeZoneDSTOffset(tnow) - (offsetHrs * 3600)) / 60;
 
 // Guard against timezone problems
-if (offsetHrs>-24 && offset<24) {
-if (offset < 0) {
+if (offsetHrs>-24 && offsetHrs<24) {
+if (offsetHrs < 0) {
 ISOString = ISOString + "-" + _digits[-offsetHrs] + _digits[-offsetMins];
 } else {
 ISOString = ISOString + "+" + _digits[offsetHrs] + _digits[offsetMins];
