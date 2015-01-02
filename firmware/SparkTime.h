@@ -41,7 +41,8 @@ public:
   void begin(UDP * UPDClient, const char * NTPServer);
   bool hasSynced();
   void setNTPInvterval(uint32_t intervalMinutes);
-  void setTimeZone(float hoursOffset);
+  void setTimeZoneHrs(uint32_t hoursOffset);
+  void setTimeZoneMns(uint32_t minsOffset);
   void setUseDST(bool value);
   void setUseEuroDSTRule(bool value);
 
@@ -86,7 +87,8 @@ private:
   uint32_t _lastSyncNTPTime;
   uint32_t _lastSyncNTPFrac;
   uint32_t _interval;
-  float _timezone;
+  uint32_t _timezoneHrs;
+  uint32_t _timezoneMns;
   uint32_t _tz;
   
   bool _useDST;
