@@ -190,7 +190,7 @@ ISOString = ISOString + "+" + _digits[offsetHrs] + _digits[offsetMins];
 return ISOString;
 }
 String SparkTime::ISODateUTCString(uint32_t tnow) {
-float_t savedTimeZone = _timezone;
+float savedTimeZone = _timezone;
 bool savedUseDST = _useDST;
 _timezone = 0.0;
 _useDST = false;
@@ -244,7 +244,7 @@ const uint32_t fiveMinutes = 5UL * 60UL;
 uint32_t interval = intervalMinutes * 60UL;
 _interval = max(fiveMinutes, interval);
 }
-void SparkTime::setTimeZone(float_t hoursOffset) {
+void SparkTime::setTimeZone(float hoursOffset) {
 _timezone = hoursOffset;
 }
 bool SparkTime::isUSDST(uint32_t tnow) {
@@ -340,25 +340,25 @@ bytesrecv = _UDPClient->parsePacket();
 retries++;
 }
 if (bytesrecv>0) {
-_UDPClient->read(_packetBuffer,SPARKTIMENTPSIZE);
-// Handle Kiss-of-death
-if (_packetBuffer[1]==0) {
-_interval = max(_interval * 2, 24UL*60UL*60UL);
-}
-_lastSyncNTPTime = _packetBuffer[40] << 24 | _packetBuffer[41] << 16 | _packetBuffer[42] << 8 | _packetBuffer[43];
-_lastSyncNTPFrac = _packetBuffer[44] << 24 | _packetBuffer[45] << 16 | _packetBuffer[46] << 8 | _packetBuffer[47];
-_lastSyncMillisTime = localmsec;
-_syncedOnce = true;
-}
-//digitalWrite(D7,LOW);
-_UDPClient->stop();
-_isSyncing = false;
+  _UDPClient->read(_packetBuffer,SPARKTIMENTPSIZE);
+  // Handle Kiss-of-death
+  if (_packetBuffer[1]==0) {
+    _interval = max(_interval * 2, 24UL*60UL*60UL);
+  }
+    _lastSyncNTPTime = _packetBuffer[40] << 24 | _packetBuffer[41] << 16 | _packetBuffer[42] << 8 | _packetBuffer[43];
+    _lastSyncNTPFrac = _packetBuffer[44] << 24 | _packetBuffer[45] << 16 | _packetBuffer[46] << 8 | _packetBuffer[47];
+    _lastSyncMillisTime = localmsec;
+    _syncedOnce = true;
+  }
+  //digitalWrite(D7,LOW);
+  _UDPClient->stop();
+  _isSyncing = false;
 }
 int32_t SparkTime::timeZoneDSTOffset(uint32_t tnow) {
 int32_t result = int32_t(_timezone*3600UL);					// _timezone is a float_t so need to cast back
-if ((_useDST && (!_useEuroDSTRule && isUSDST(tnow))) ||
-(_useDST && (_useEuroDSTRule && isEuroDST(tnow)))) {
-result += 3600UL;
-}
-return result;
+  if ((_useDST && (!_useEuroDSTRule && isUSDST(tnow))) ||
+      (_useDST && (_useEuroDSTRule && isEuroDST(tnow)))) {
+      result += 3600UL;
+  }
+  return result;
 }
