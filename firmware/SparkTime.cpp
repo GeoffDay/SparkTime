@@ -234,9 +234,9 @@ String SparkTime::ISODateString(uint32_t tnow) {
 }
 
 String SparkTime::ISODateUTCString(uint32_t tnow) {
-  uint32_t savedTimeZone = _timezone;
+  int32_t savedTimeZone = _timezone;
   bool savedUseDST = _useDST;
-  _timezone = 0.0;
+  _timezone = 0;
   _useDST = false;
   String ISOString;
   
@@ -300,11 +300,11 @@ void SparkTime::setNTPInvterval(uint32_t intervalMinutes) {
   _interval = max(fiveMinutes, interval);
 }
 
-void SparkTime::setTimeZoneHrs(uint32_t hoursOffset) {
+void SparkTime::setTimeZoneHrs(int32_t hoursOffset) {
   _timezoneHrs = hoursOffset;
 }
 
-void SparkTime::setTimeZoneMns(uint32_t minsOffset) {
+void SparkTime::setTimeZoneMns(int32_t minsOffset) {
   _timezoneMns = minsOffset;
 }
 
