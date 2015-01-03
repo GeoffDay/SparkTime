@@ -1,4 +1,4 @@
-/* Spark Time by Brian Ogilvie. Fractional timezones by Geoff Day 2 Jan 2015.
+/* Spark Time by Brian Ogilvie. Fractional timezones by Geoff Day 3 Jan 2015.
 Inspired by Arduino Time by Michael Margolis
 Copyright (c) 2014 Brian Ogilvie. All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -234,9 +234,12 @@ String SparkTime::ISODateString(uint32_t tnow) {
 }
 
 String SparkTime::ISODateUTCString(uint32_t tnow) {
-  int32_t savedTimeZone = _timezone;
+  int32_t savedTimeZoneHrs = _timezoneHrs;
+  int32_t savedTimeZoneMns = _timezoneMns;
   bool savedUseDST = _useDST;
-  _timezone = 0;
+  
+  _timezoneHrs = 0;
+  _timezoneMns = 0;
   _useDST = false;
   String ISOString;
   
@@ -253,7 +256,8 @@ String SparkTime::ISODateUTCString(uint32_t tnow) {
   ISOString += secondString(tnow);
   ISOString += "Z";
   
-  _timezone = savedTimeZone;
+  _timezoneHrs = savedTimeZoneHrs;
+  _timezoneMns = savedTimeZoneMns;
   _useDST = savedUseDST;
 
   return ISOString;
