@@ -1,4 +1,5 @@
 /* Spark Time by Brian Ogilvie. Fractional timezones by Geoff Day 3 Jan 2015.
+Added Rule based DST for those outside Europe or US by Geoff Day 23 June 2015.
 Inspired by Arduino Time by Michael Margolis
 Copyright (c) 2014 Brian Ogilvie. All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -30,7 +31,12 @@ SparkTime::SparkTime()
     _timezoneMns = 30;
     _tz = uint32_t(_timezoneHrs*3600UL + _timezoneMns*60UL);	// make an integer version of _timezone
     _useDST = true;
-    _useEuroDSTRule = false;
+    _useDSTRule = 2;        //0 US, 1 Euro, 2 anywhere else. Must set day month and hour 
+    _DSTDayStart = 0;       //Sunday
+    _DSTMonthStart = 3;     //April
+    _DSTHourChange = 2;     //2 am transistion
+    _DSTDayEnd = 0;         //Sunday again
+    _DSTMonthEnd = 9;       //October
     _syncedOnce = false;
     _interval = 60UL * 60UL;
     _localPort = 2390;
@@ -55,8 +61,8 @@ void SparkTime::setUseDST(bool value) {
   _useDST = value;
 }
 
-void SparkTime::setUseEuroDSTRule(bool value) {
-  _useEuroDSTRule = value;
+void SparkTime::setUseDSTRule(Unit8_t value) {
+  _useDSTRule = value;
 }
 
 uint8_t SparkTime::hour(uint32_t tnow) {
@@ -355,6 +361,7 @@ bool SparkTime::isEuroDST(uint32_t tnow) {
   // 1am last Sunday in March to 1am on last Sunday October
   // can't use offset here
   bool result = false;
+  
   uint32_t dayNum = (tnow+_tz-SPARKTIMEBASESTART)/SPARKTIMESECPERDAY; //_tz is _timezone X 3600
   uint32_t tempYear = SPARKTIMEBASEYEAR;
   uint8_t tempMonth = 0;
@@ -389,6 +396,48 @@ bool SparkTime::isEuroDST(uint32_t tnow) {
 
   return result;
 }
+
+
+bool SparkTime::isAnyWhereElseDST(uint32_t tnow) {
+  // We'll use those start and end days and months to sort out DST    
+  // can't use offset here
+  bool result = false;
+  
+  uint32_t dayNum = (tnow+_tz-SPARKTIMEBASESTART)/SPARKTIMESECPERDAY; //_tz is _timezone X 3600
+  uint32_t tempYear = SPARKTIMEBASEYEAR;
+  uint8_t tempMonth = 0;
+  uint8_t tempHour = ((tnow+_tz) % 86400UL)/3600UL;
+  
+  while(dayNum >= YEARSIZE(tempYear)) {
+    dayNum -= YEARSIZE(tempYear);
+    tempYear++;
+  }
+
+  while(dayNum >= _monthLength[LEAPYEAR(tempYear)][tempMonth]) {
+    dayNum -= _monthLength[LEAPYEAR(tempYear)][tempMonth];
+    tempMonth++;
+  }
+
+  tempMonth++;
+  dayNum++; // correct for zero-base
+
+  if (tempMonth>_DSTMonthStart && tempMonth<_DSTMonthEnd) {
+      result = true;
+  } else if (tempMonth == _DSTMonthStart) {
+      if ((dayNum == _DSTDayStart[tempYear-SPARKTIMEBASEYEAR] && tempHour >=_DSTHourChange) ||
+          (dayNum > _DSTDayStart[tempYear-SPARKTIMEBASEYEAR])) {{
+          result = true;
+      }
+  } else if (tempMonth == _DSTMonthEnd) {
+      if (!((dayNum == _DSTDayEnd[tempYear-SPARKTIMEBASEYEAR] && tempHour >=_DSTHourChange) ||
+          (dayNum > _DSTDayEnd[tempYear-SPARKTIMEBASEYEAR]))) {
+          result = true;
+      }
+  }
+
+  return result;
+}
+
 
 void SparkTime::updateNTPTime() {
   //digitalWrite(D7,HIGH);
@@ -439,8 +488,9 @@ void SparkTime::updateNTPTime() {
 int32_t SparkTime::timeZoneDSTOffset(uint32_t tnow) {
   int32_t result = _timezoneHrs*3600UL + _timezoneMns*60UL;	
   
-  if ((_useDST && (!_useEuroDSTRule && isUSDST(tnow))) ||
-      (_useDST && (_useEuroDSTRule && isEuroDST(tnow)))) {
+  if ((_useDST && ((_useDSTRule == 0) && isUSDST(tnow))) ||
+      (_useDST && ((_useDSTRule == 1) && isEuroDST(tnow))) ||
+      (_useDST && ((_useDSTRule == 2) && isAnyWhereElseDST(tnow)))) {
       result += 3600UL;
   }
   return result;
