@@ -44,7 +44,7 @@ public:
   void setTimeZoneHrs(int32_t hoursOffset);
   void setTimeZoneMns(int32_t minsOffset);
   void setUseDST(bool value);
-  void setUseEuroDSTRule(bool value);
+  void setUseDSTRule(uint8_t value);	//I've added a third rule for non Euro or US use 
 
   uint32_t now();
   uint32_t nowNoUpdate();
@@ -90,9 +90,14 @@ private:
   int32_t _timezoneHrs;
   int32_t _timezoneMns;
   int32_t _tz;
+  uint8_t _DSTDayStart;
+  uint8_t _DSTMonthStart;
+  uint8_t _DSTDayEnd;
+  uint8_t _DSTMonthEnd;
+  uint8_t _DSTHourChange;
   
   bool _useDST;
-  bool _useEuroDSTRule;
+  uint8_t _useDSTRule;	//I've added a third rule for non Euro or US use 
   uint32_t _localPort;
   uint8_t _packetBuffer[SPARKTIMENTPSIZE];
   void updateNTPTime();
