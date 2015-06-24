@@ -44,8 +44,13 @@ public:
   void setTimeZoneHrs(int32_t hoursOffset);
   void setTimeZoneMns(int32_t minsOffset);
   void setUseDST(bool value);
-  void setUseDSTRule(uint8_t value);	//I've added a third rule for non Euro or US use 
-
+  void setUseDSTRule(uint8_t value);	//added a 3rd & 4th rule for non Euro or US use in north or south hemisphere 
+  void setDSTDayStart(uint8_t dayStart);	//2 digit day ie 10 is first Sunday, 26 is second Saturday
+  void setDSTMonthStart(uint8_t monthStart);	//Month start value. In Southern Hemi. this will be the end month
+  void setDSTHourChange(uint8_t hourChange);
+  void setDSTDayEnd(uint8_t dayEnd);		//2 digit day ie 10 is first Sunday, 26 is second Saturday
+  void setDSTMonthEnd(uint8_t monthEnd);	//Month end value. In Southern Hemi. this will be the start month
+  
   uint32_t now();
   uint32_t nowNoUpdate();
   uint32_t nowEpoch();
@@ -61,7 +66,8 @@ public:
   
   bool isUSDST(uint32_t tnow); //2nd Sun in Mar to 1st Sun in Nov
   bool isEuroDST(uint32_t tnow); //Last Sun in Mar to last Sun in Oct
-
+  bool isAnyWhereElseDST(uint32_t tnow); //need to enter start and end dates
+  
   String hourString(uint32_t tnow);
   String hour12String(uint32_t tnow);
   String minuteString(uint32_t tnow);
