@@ -1,5 +1,5 @@
 /* Spark Time by Brian Ogilvie. Fractional timezones by Geoff Day 3 Jan 2015.
-Added Rule based DST for those outside Europe or US by Geoff Day 23 June 2015.
+Added Rule based DST for those outside Europe or US by Geoff Day 24 June 2015.
 Inspired by Arduino Time by Michael Margolis
 Copyright (c) 2014 Brian Ogilvie. All rights reserved.
 Redistribution and use in source and binary forms, with or without
@@ -27,16 +27,16 @@ Translation for other languages
 SparkTime::SparkTime()
 {
     _UDPClient = NULL;
-    _timezoneHrs = 10;	
+    _timezoneHrs = 9;	
     _timezoneMns = 30;
     _tz = uint32_t(_timezoneHrs*3600UL + _timezoneMns*60UL);	// make an integer version of _timezone
     _useDST = true;
-    _useDSTRule = 2;        //0 US, 1 Euro, 2 anywhere else. Must set day month and hour 
-    _DSTDayStart = 0;       //Sunday
-    _DSTMonthStart = 3;     //April
-    _DSTHourChange = 2;     //2 am transistion
-    _DSTDayEnd = 0;         //Sunday again
-    _DSTMonthEnd = 9;       //October
+    _useDSTRule = 3;    //0 US, 1 Euro, 2 anywhere else in Northern Hemi. or 3 anywhere else in Southern Hemisphere. 
+    _DSTDayStart = 10;  //two digits - first, second, third or last in the month followed by the day. 10 is first Sunday.
+    _DSTMonthStart = 3; //0 - Jan, 1 - Feb, 2 - March, 3 - April and so on. 
+    _DSTHourChange = 2; //2 am transistion
+    _DSTDayEnd = 10;    //first Sunday again
+    _DSTMonthEnd = 9;   //9 is October. In Southern Hemi. the end month is really the start!!
     _syncedOnce = false;
     _interval = 60UL * 60UL;
     _localPort = 2390;
@@ -318,6 +318,26 @@ void SparkTime::setTimeZoneMns(int32_t minsOffset) {
   _timezoneMns = minsOffset;
 }
 
+void SparkTime::setDSTDayStart(int8_t dayStart) {
+  _DSTDayStart = dayStart;
+}
+
+void SparkTime::setDSTMonthStart(int8_t monthStart) {
+  _DSTMonthStart = monthStart;
+}
+
+void SparkTime::setDSTHourChange(int8_t hourChange) {
+  _DSTHourChange = hourChange;
+}
+
+void SparkTime::setDSTDayEnd(int8_t dayEnd) {
+  _DSTDayEnd = dayEnd;
+}
+
+void SparkTime::setDSTMonthEnd(int8_t monthEnd) {
+  _DSTMonthEnd = monthEnd;
+}
+
 bool SparkTime::isUSDST(uint32_t tnow) {
   // 2am 2nd Sunday in March to 2am 1st Sunday in November
   // can't use offset here
@@ -407,7 +427,8 @@ bool SparkTime::isAnyWhereElseDST(uint32_t tnow) {
   uint32_t tempYear = SPARKTIMEBASEYEAR;
   uint8_t tempMonth = 0;
   uint8_t tempHour = ((tnow+_tz) % 86400UL)/3600UL;
-  
+  uint8_t smtDOWeek = (dayNum + 4) % 7;                 //Unix epoch day 0 was a thursday
+    
   while(dayNum >= YEARSIZE(tempYear)) {
     dayNum -= YEARSIZE(tempYear);
     tempYear++;
@@ -420,21 +441,21 @@ bool SparkTime::isAnyWhereElseDST(uint32_t tnow) {
 
   tempMonth++;
   dayNum++; // correct for zero-base
+  smtDOWeek += ((dayNum / 7) * 10) + 10;  //2 digits - first, second, third or last in month followed by the day.
 
   if (tempMonth>_DSTMonthStart && tempMonth<_DSTMonthEnd) {
       result = true;
   } else if (tempMonth == _DSTMonthStart) {
-      if ((dayNum == _DSTDayStart[tempYear-SPARKTIMEBASEYEAR] && tempHour >=_DSTHourChange) ||
-          (dayNum > _DSTDayStart[tempYear-SPARKTIMEBASEYEAR])) {{
+      if ((smtDOWeek == _DSTDayStart[tempYear-SPARKTIMEBASEYEAR] && tempHour >=_DSTHourChange) ||
+          (smtDOWeek > _DSTDayStart[tempYear-SPARKTIMEBASEYEAR])) {{
           result = true;
       }
   } else if (tempMonth == _DSTMonthEnd) {
-      if (!((dayNum == _DSTDayEnd[tempYear-SPARKTIMEBASEYEAR] && tempHour >=_DSTHourChange) ||
-          (dayNum > _DSTDayEnd[tempYear-SPARKTIMEBASEYEAR]))) {
+      if (!((smtDOWeek == _DSTDayEnd[tempYear-SPARKTIMEBASEYEAR] && tempHour >=_DSTHourChange) ||
+          (smtDOWeek > _DSTDayEnd[tempYear-SPARKTIMEBASEYEAR]))) {
           result = true;
       }
   }
-
   return result;
 }
 
@@ -491,6 +512,8 @@ int32_t SparkTime::timeZoneDSTOffset(uint32_t tnow) {
   if ((_useDST && ((_useDSTRule == 0) && isUSDST(tnow))) ||
       (_useDST && ((_useDSTRule == 1) && isEuroDST(tnow))) ||
       (_useDST && ((_useDSTRule == 2) && isAnyWhereElseDST(tnow)))) {
+      result += 3600UL;
+  } else if (_useDST && ((_useDSTRule == 3) && !isAnyWhereElseDST(tnow))) {
       result += 3600UL;
   }
   return result;
