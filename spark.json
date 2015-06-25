@@ -2,6 +2,6 @@
   "name": "SparkTime",
   "author": "Geoff Day from Brian Ogilvie <bko@pobox.com>",
   "license": "MIT",
-  "version": "0.0.61",
+  "version": "0.0.62",
   "description": "A Spark Library for NTP time. Timezone Minutes allowed. DST Start & End rules can be entered."
 }
