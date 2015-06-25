@@ -318,23 +318,23 @@ void SparkTime::setTimeZoneMns(int32_t minsOffset) {
   _timezoneMns = minsOffset;
 }
 
-void SparkTime::setDSTDayStart(int8_t dayStart) {
+void SparkTime::setDSTDayStart(uint8_t dayStart) {
   _DSTDayStart = dayStart;
 }
 
-void SparkTime::setDSTMonthStart(int8_t monthStart) {
+void SparkTime::setDSTMonthStart(uint8_t monthStart) {
   _DSTMonthStart = monthStart;
 }
 
-void SparkTime::setDSTHourChange(int8_t hourChange) {
+void SparkTime::setDSTHourChange(uint8_t hourChange) {
   _DSTHourChange = hourChange;
 }
 
-void SparkTime::setDSTDayEnd(int8_t dayEnd) {
+void SparkTime::setDSTDayEnd(uint8_t dayEnd) {
   _DSTDayEnd = dayEnd;
 }
 
-void SparkTime::setDSTMonthEnd(int8_t monthEnd) {
+void SparkTime::setDSTMonthEnd(uint8_t monthEnd) {
   _DSTMonthEnd = monthEnd;
 }
 
