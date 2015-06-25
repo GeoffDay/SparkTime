@@ -61,7 +61,7 @@ void SparkTime::setUseDST(bool value) {
   _useDST = value;
 }
 
-void SparkTime::setUseDSTRule(Unit8_t value) {
+void SparkTime::setUseDSTRule(uint8_t value) {
   _useDSTRule = value;
 }
 
@@ -318,11 +318,11 @@ void SparkTime::setTimeZoneMns(int32_t minsOffset) {
   _timezoneMns = minsOffset;
 }
 
-void SparkTime::setDSTDayStart(uint8_t dayStart) {
+void SparkTime::setDSTDayStart(uint32_t dayStart) {
   _DSTDayStart = dayStart;
 }
 
-void SparkTime::setDSTMonthStart(uint8_t monthStart) {
+void SparkTime::setDSTMonthStart(uint32_t monthStart) {
   _DSTMonthStart = monthStart;
 }
 
@@ -330,11 +330,11 @@ void SparkTime::setDSTHourChange(uint8_t hourChange) {
   _DSTHourChange = hourChange;
 }
 
-void SparkTime::setDSTDayEnd(uint8_t dayEnd) {
+void SparkTime::setDSTDayEnd(uint32_t dayEnd) {
   _DSTDayEnd = dayEnd;
 }
 
-void SparkTime::setDSTMonthEnd(uint8_t monthEnd) {
+void SparkTime::setDSTMonthEnd(uint32_t monthEnd) {
   _DSTMonthEnd = monthEnd;
 }
 
@@ -427,7 +427,7 @@ bool SparkTime::isAnyWhereElseDST(uint32_t tnow) {
   uint32_t tempYear = SPARKTIMEBASEYEAR;
   uint8_t tempMonth = 0;
   uint8_t tempHour = ((tnow+_tz) % 86400UL)/3600UL;
-  uint8_t smtDOWeek = (dayNum + 4) % 7;                 //Unix epoch day 0 was a thursday
+  uint32_t smtDOWeek = (dayNum + 4) % 7;                 //Unix epoch day 0 was a thursday
     
   while(dayNum >= YEARSIZE(tempYear)) {
     dayNum -= YEARSIZE(tempYear);
