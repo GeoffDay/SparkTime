@@ -322,11 +322,11 @@ void SparkTime::setDSTDayStart(uint32_t dayStart) {
   _DSTDayStart = dayStart;
 }
 
-void SparkTime::setDSTMonthStart(uint32_t monthStart) {
+void SparkTime::setDSTMonthStart(uint8_t monthStart) {
   _DSTMonthStart = monthStart;
 }
 
-void SparkTime::setDSTHourChange(uint32_t hourChange) {
+void SparkTime::setDSTHourChange(uint8_t hourChange) {
   _DSTHourChange = hourChange;
 }
 
@@ -334,7 +334,7 @@ void SparkTime::setDSTDayEnd(uint32_t dayEnd) {
   _DSTDayEnd = dayEnd;
 }
 
-void SparkTime::setDSTMonthEnd(uint32_t monthEnd) {
+void SparkTime::setDSTMonthEnd(uint8_t monthEnd) {
   _DSTMonthEnd = monthEnd;
 }
 
@@ -446,13 +446,11 @@ bool SparkTime::isAnyWhereElseDST(uint32_t tnow) {
   if (tempMonth>_DSTMonthStart && tempMonth<_DSTMonthEnd) {
       result = true;
   } else if (tempMonth == _DSTMonthStart) {
-      if ((smtDOWeek == _DSTDayStart[tempYear-SPARKTIMEBASEYEAR] && tempHour >=_DSTHourChange) ||
-          (smtDOWeek > _DSTDayStart[tempYear-SPARKTIMEBASEYEAR])) {{
+      if ((smtDOWeek == _DSTDayStart && tempHour >=_DSTHourChange) || (smtDOWeek > _DSTDayStart)) {{
           result = true;
       }
   } else if (tempMonth == _DSTMonthEnd) {
-      if (!((smtDOWeek == _DSTDayEnd[tempYear-SPARKTIMEBASEYEAR] && tempHour >=_DSTHourChange) ||
-          (smtDOWeek > _DSTDayEnd[tempYear-SPARKTIMEBASEYEAR]))) {
+      if (!((smtDOWeek == _DSTDayEnd && tempHour >=_DSTHourChange) || (smtDOWeek > _DSTDayEnd))) {
           result = true;
       }
   }
