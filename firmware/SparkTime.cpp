@@ -446,7 +446,7 @@ bool SparkTime::isAnyWhereElseDST(uint32_t tnow) {
   if (tempMonth>_DSTMonthStart && tempMonth<_DSTMonthEnd) {
       result = true;
   } else if (tempMonth == _DSTMonthStart) {
-      if ((smtDOWeek == _DSTDayStart && tempHour >=_DSTHourChange) || (smtDOWeek > _DSTDayStart)) {{
+      if ((smtDOWeek == _DSTDayStart && tempHour >=_DSTHourChange) || (smtDOWeek > _DSTDayStart)) {
           result = true;
       }
   } else if (tempMonth == _DSTMonthEnd) {
