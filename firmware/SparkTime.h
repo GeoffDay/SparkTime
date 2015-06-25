@@ -47,7 +47,7 @@ public:
   void setUseDSTRule(uint8_t value);	//added a 3rd & 4th rule for non Euro or US use in north or south hemisphere 
   void setDSTDayStart(uint32_t dayStart);	//2 digit day ie 10 is first Sunday, 26 is second Saturday
   void setDSTMonthStart(uint32_t monthStart);	//Month start value. In Southern Hemi. this will be the end month
-  void setDSTHourChange(uint8_t hourChange);
+  void setDSTHourChange(uint32_t hourChange);
   void setDSTDayEnd(uint32_t dayEnd);		//2 digit day ie 10 is first Sunday, 26 is second Saturday
   void setDSTMonthEnd(uint32_t monthEnd);	//Month end value. In Southern Hemi. this will be the start month
   
@@ -96,11 +96,11 @@ private:
   int32_t _timezoneHrs;
   int32_t _timezoneMns;
   int32_t _tz;
-  uint8_t _DSTDayStart;
-  uint8_t _DSTMonthStart;
-  uint8_t _DSTDayEnd;
-  uint8_t _DSTMonthEnd;
-  uint8_t _DSTHourChange;
+  uint32_t _DSTDayStart;
+  uint32_t _DSTMonthStart;
+  uint32_t _DSTDayEnd;
+  uint32_t _DSTMonthEnd;
+  uint32_t _DSTHourChange;
   
   bool _useDST;
   uint8_t _useDSTRule;	//I've added a third rule for non Euro or US use 
