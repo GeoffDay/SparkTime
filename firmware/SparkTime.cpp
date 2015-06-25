@@ -326,7 +326,7 @@ void SparkTime::setDSTMonthStart(uint32_t monthStart) {
   _DSTMonthStart = monthStart;
 }
 
-void SparkTime::setDSTHourChange(uint8_t hourChange) {
+void SparkTime::setDSTHourChange(uint32_t hourChange) {
   _DSTHourChange = hourChange;
 }
 
