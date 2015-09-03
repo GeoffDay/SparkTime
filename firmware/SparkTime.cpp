@@ -70,6 +70,20 @@ uint8_t SparkTime::hour(uint32_t tnow) {
   return hTemp;
 }
 
+uint8_t hourTwelve(uint32_t tnow);
+  uint8_t hTemp = ((tnow+timeZoneDSTOffset(tnow)) % 86400UL)/3600UL;
+
+  if (hTemp > 12) {
+      hTemp -= 12;
+  }
+  
+  if (hTemp == 0) {
+      hTemp = 12;
+  }
+
+  return hTemp;
+}
+
 uint8_t SparkTime::minute(uint32_t tnow) {
   return (((tnow+timeZoneDSTOffset(tnow)) % 3600) / 60);
 }
