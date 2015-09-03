@@ -1,5 +1,7 @@
-/* Spark Time by Brian Ogilvie. Fractional timezones by Geoff Day 3 Jan 2015.
+/* Spark Time by Brian Ogilvie. 
+Fractional timezones by Geoff Day 3 Jan 2015.
 Added Rule based DST for those outside Europe or US by Geoff Day 24 June 2015.
+added routine to output hours in 1 to 12 format 3 Sept 2015 by Geoff Day. 
 Inspired by Arduino Time by Michael Margolis
 Copyright (c) 2014 Brian Ogilvie. All rights reserved.
 Redistribution and use in source and binary forms, with or without
