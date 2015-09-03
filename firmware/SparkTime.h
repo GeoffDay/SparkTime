@@ -57,6 +57,7 @@ public:
   uint32_t lastNTPTime();
 
   uint8_t hour(uint32_t tnow);
+  uint8_t hourTwelve(uint32_t tnow);
   uint8_t minute(uint32_t tnow);
   uint8_t second(uint32_t tnow);
   uint8_t dayOfWeek(uint32_t tnow);
