@@ -437,7 +437,6 @@ bool SparkTime::isEuroDST(uint32_t tnow) {
 bool SparkTime::isAnyWhereElseDST(uint32_t tnow) {
   // We'll use those start and end days and months to sort out DST    
   // can't use offset here
-  bool result = false;
   
   uint32_t dayNum = (tnow+_tz-SPARKTIMEBASESTART)/SPARKTIMESECPERDAY; //_tz is _timezone X 3600
   uint32_t tempYear = SPARKTIMEBASEYEAR;
@@ -455,23 +454,27 @@ bool SparkTime::isAnyWhereElseDST(uint32_t tnow) {
     tempMonth++;
   }
 
-  tempMonth++;
-  dayNum++; // correct for zero-base
-  smtDOWeek += ((dayNum / 7) * 10) + 10;  //2 digits - first, second, third or last in month followed by the day.
+  tempMonth++;      
+  dayNum++;                                   // correct for zero-base. This is 1 through 31
+  uint8_t week = (int(dayNum / 7) * 10) + 10; //2 digits - first, second, third or last in month followed by the day.
+  
+  if (week == 50) {week = 40;}                // 4th or 5th of the month becomes last     
+  
+  smtDOWeek += week;
 
-  if (tempMonth>_DSTMonthStart && tempMonth<_DSTMonthEnd) {
+  bool result = false;
+  if ((tempMonth > _DSTMonthStart) && (tempMonth < _DSTMonthEnd)) {     //northern hemisphere
       result = true;
-  } else if (tempMonth == _DSTMonthStart) {
-      if ((smtDOWeek == _DSTDayStart && tempHour >=_DSTHourChange) || (smtDOWeek > _DSTDayStart)) {
+  } else if ((tempMonth == _DSTMonthStart) && (((smtDOWeek == _DSTDayStart) && (tempHour >=_DSTHourChange)) || (smtDOWeek > _DSTDayStart))) {
           result = true;
       }
-  } else if (tempMonth == _DSTMonthEnd) {
-      if (!((smtDOWeek == _DSTDayEnd && tempHour >=_DSTHourChange) || (smtDOWeek > _DSTDayEnd))) {
+  } else if ((tempMonth == _DSTMonthEnd) && (((smtDOWeek == _DSTDayEnd) && (tempHour >=_DSTHourChange)) || (smtDOWeek > _DSTDayEnd))) {
           result = true;
       }
   }
   return result;
 }
+
 
 
 void SparkTime::updateNTPTime() {
