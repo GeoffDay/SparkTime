@@ -467,10 +467,8 @@ bool SparkTime::isAnyWhereElseDST(uint32_t tnow) {
       result = true;
   } else if ((tempMonth == _DSTMonthStart) && (((smtDOWeek == _DSTDayStart) && (tempHour >=_DSTHourChange)) || (smtDOWeek > _DSTDayStart))) {
           result = true;
-      }
   } else if ((tempMonth == _DSTMonthEnd) && (((smtDOWeek == _DSTDayEnd) && (tempHour >=_DSTHourChange)) || (smtDOWeek > _DSTDayEnd))) {
           result = true;
-      }
   }
   return result;
 }
